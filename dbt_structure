@@ -1,0 +1,78 @@
+.
+├── README.md
+├── analyses
+├── datasets
+│   ├── credits.csv
+│   ├── data_load.py
+│   └── titles.csv
+├── dbt_project.yml
+├── logs
+│   ├── dbt.log
+│   ├── dbt.log.1
+│   ├── dbt.log.2
+│   ├── dbt.log.3
+│   ├── dbt.log.4
+│   └── dbt.log.5
+├── macros
+├── models
+│   ├── example
+│   │   ├── my_first_dbt_model.sql
+│   │   ├── my_second_dbt_model.sql
+│   │   └── schema.yml
+│   └── netflix
+│       ├── dimension
+│       │   └── POPULARITY_DIM.sql
+│       ├── fact
+│       │   ├── ACTORS_DOMINATING_FACT.sql
+│       │   └── MOVIES_SERIES_SHARE.sql
+│       └── stage
+│           ├── CREDITS_DIM.sql
+│           ├── SCORES_VOTES_DIM.sql
+│           ├── SHOW_DETAILS_DIM.sql
+│           ├── src_netflix.yml
+│           └── stage_netflix.yml
+├── profiles.yml
+├── seeds
+├── snapshots
+├── target
+│   ├── compiled
+│   │   └── netflix_project
+│   │       ├── models
+│   │       │   └── netflix
+│   │       │       ├── dimension
+│   │       │       │   └── POPULARITY_DIM.sql
+│   │       │       ├── fact
+│   │       │       │   ├── ACTORS_DOMINATING_FACT.sql
+│   │       │       │   └── MOVIES_SERIES_SHARE.sql
+│   │       │       └── stage
+│   │       │           ├── CREDITS_DIM.sql
+│   │       │           ├── SCORES_VOTES_DIM.sql
+│   │       │           ├── SHOW_DETAILS_DIM.sql
+│   │       │           └── stage_netflix.yml
+│   │       │               ├── not_null_CREDITS_DIM_ID.sql
+│   │       │               └── unique_CREDITS_DIM_ID.sql
+│   │       └── tests
+│   │           └── SHOW_DETAILS_NOT_NULL.sql
+│   ├── graph.gpickle
+│   ├── graph_summary.json
+│   ├── manifest.json
+│   ├── partial_parse.msgpack
+│   ├── run
+│   │   └── netflix_project
+│   │       ├── models
+│   │       │   └── netflix
+│   │       │       ├── dimension
+│   │       │       │   └── POPULARITY_DIM.sql
+│   │       │       ├── fact
+│   │       │       │   ├── ACTORS_DOMINATING_FACT.sql
+│   │       │       │   └── MOVIES_SERIES_SHARE.sql
+│   │       │       └── stage
+│   │       │           ├── CREDITS_DIM.sql
+│   │       │           ├── SCORES_VOTES_DIM.sql
+│   │       │           └── SHOW_DETAILS_DIM.sql
+│   │       └── tests
+│   │           └── SHOW_DETAILS_NOT_NULL.sql
+│   ├── run_results.json
+│   └── semantic_manifest.json
+└── tests
+    └── SHOW_DETAILS_NOT_NULL.sql
