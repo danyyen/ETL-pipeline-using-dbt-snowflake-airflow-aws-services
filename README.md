@@ -22,13 +22,15 @@ Analytics initiatives often fail due to:
 
 ## Architecture
 The pipeline follows a modern cloud-native architecture:
+![architecture](https://github.com/user-attachments/assets/9a4828ec-83a0-4c32-aa4c-4a1f834cd970)
+
 
 1.  **Storage:** Raw data landing in **Amazon S3**.
 2.  **Ingestion:** Python logic moving data into **Snowflake** (Raw/Staging schemas).
 3.  **Transformation:** **dbt** modular modeling (Staging → Intermediate → Marts).
 4.  **Orchestration:** **Apache Airflow** managing task dependencies and sensors.
 5.  **Monitoring:** **AWS SNS** & **Slack** notifications on task failure.
-6.  **Analytics:** Final datasets exposed for **Power BI** and SQL analytics.
+6.  **Analytics:** Final datasets exposed for **AWS QuickSIght** or **Power BI** and SQL analytics.
 
 
 
