@@ -1,0 +1,19 @@
+.
+├── DAGS
+│   ├── Netflix_Data_Analytics.py
+│   ├── __pycache__
+│   │   └── Netflix_Data_Analytics.cpython-39.pyc
+│   ├── alerting
+│   │   ├── __pycache__
+│   │   │   ├── slack_alert.cpython-39.pyc
+│   │   │   └── sns_alert.cpython-39.pyc
+│   │   ├── slack_alert.py
+│   │   └── sns_alert.py
+│   ├── readme.md
+│   └── source_load
+│       ├── __pycache__
+│       │   └── data_load.cpython-39.pyc
+│       └── data_load.py
+├── README.md
+├── config
+└── plugins
