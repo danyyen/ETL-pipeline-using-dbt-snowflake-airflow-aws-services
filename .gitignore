@@ -1,0 +1,20 @@
+# Airflow
+__pycache__/
+airflow.db
+airflow.cfg
+logs/
+
+# dbt
+target/
+logs/
+dbt_packages/
+profiles.yml
+
+# Python
+*.pyc
+.env
+dbt-env/
+
+# OS / Editor
+.DS_Store
+.vscode/
