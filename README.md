@@ -1,43 +1,55 @@
-# ETL Pipeline Using dbt, Snowflake, Airflow & AWS Services
+# ETL Pipeline - dbt, Snowflake, Airflow & AWS Services
 
-This repository contains a **production-style ELT data platform** built to transform raw data into **trusted, analytics-ready datasets** using modern data engineering best practices.
+A production-style **ELT data platform** that transforms raw data into **trusted analytics-ready datasets** using industry-standard tooling.
 
----
-
-## Data Engineering ELT Platform
-
-[![Airflow](https://img.shields.io/badge/Orchestration-Apache_Airflow-017CEE?style=flat&logo=apache-airflow)](https://airflow.apache.org/)
-[![dbt](https://img.shields.io/badge/Transformation-dbt-FF694B?style=flat&logo=dbt)](https://www.getdbt.com/)
-[![Snowflake](https://img.shields.io/badge/Warehouse-Snowflake-29B5E8?style=flat&logo=snowflake)](https://www.snowflake.com/)
-[![AWS](https://img.shields.io/badge/Cloud-AWS-232F3E?style=flat&logo=amazon-aws)](https://aws.amazon.com/)
+This project demonstrates how to build a robust, scalable ELT pipeline using modern data engineering best practices, including orchestration, data quality testing, observability, and reliability.
 
 ---
+## 📌 Project Overview
 
-## Overview
-
-This repository contains a **production-style ELT data platform** built to transform raw Netflix data into **trusted, analytics-ready datasets**.  
-The project mirrors real-world enterprise data team workflows, emphasizing **orchestration, testing, observability, and reliability** over ad-hoc scripts.
-
----
-
-## Problem Statement
+###  Objective
 
 Analytics initiatives often fail due to:
+- Unvalidated/raw data leading to unreliable analyses  
+- Tight coupling between transformation logic and reporting layers  
+- Lack of observability, alerts, and automated failure handling
 
-- **Unreliable raw data** with no validation
-- **Tight coupling** between transformations and reporting
-- **Lack of observability**, alerts, and failure handling
+**Goal:** Implement a scalable, testable ELT pipeline that delivers consistent, production-level reliability and trusted analytics outputs.
+---
+##  Architecture & Workflow
+
+**High-Level Flow:**
+
+1. **Storage:** Raw data lands in Amazon S3  
+2. **Ingestion:** Python scripts load data into Snowflake (Raw → Staging)  
+3. **Transformation:** dbt builds modular models (Staging → Intermediate → Marts)  
+4. **Orchestration:** Apache Airflow DAG manages task dependencies  
+5. **Monitoring:** Alerts via AWS SNS & Slack on failure  
+6. **Analytics:** Final datasets are ready for BI tools (Power BI, QuickSight)
+
+**Architecture Diagram:**  
+![architecture](https://github.com/user-attachments/assets/9a4828ec-83a0-4c32-aa4c-4a1f834cd970)
+
+## Key Design Decisions
+
+- **ELT over ETL:**  
+  Raw data is loaded into Snowflake first, allowing transformations to leverage the warehouse’s scalability and simplifying ingestion logic.
+
+- **dbt for Transformations:**  
+  dbt enforces modular, testable SQL models with built-in lineage, documentation, and data quality checks.
+
+- **Event-Driven Orchestration:**  
+  Airflow sensors ensure downstream processing only begins when source data is available, improving reliability and cost efficiency.
+
+- **Observability by Default:**  
+  Slack and SNS alerts provide immediate feedback on pipeline health, enabling faster incident response.
+
 
 **Goal:**  
 Implement a **scalable, testable ELT pipeline** that delivers consistent, production-level reliability and trusted analytics outputs.
 
 ---
 
-## Architecture
-
-The pipeline follows a **modern cloud-native ELT architecture**:
-
-![architecture](https://github.com/user-attachments/assets/9a4828ec-83a0-4c32-aa4c-4a1f834cd970)
 
 ### High-Level Flow
 
@@ -54,13 +66,40 @@ The pipeline follows a **modern cloud-native ELT architecture**:
 
 | Layer | Tools |
 |------|------|
-| **Cloud Infrastructure** | AWS (S3, SNS, IAM, SSM) |
+| **Cloud Infrastructure** | AWS (S3, SNS, IAM, SSM), Slack |
 | **Data Warehouse** | Snowflake |
 | **Transformations** | dbt (models, tests, docs, lineage) |
 | **Orchestration** | Apache Airflow |
 | **Languages** | Python, SQL (Snowflake Dialect) |
 | **Analytics** | Power BI |
 
+---
+## Getting Started
+
+### 🔧 Prerequisites
+
+Before running this project locally or in cloud:
+
+- AWS account with S3 + SNS permissions  
+- Snowflake account with proper roles + warehouses  
+- Python ≥ 3.8  
+- dbt installed (`pip install dbt-snowflake`)  
+- Airflow installed and configured
+
+### 📦 Setup
+
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/danyyen/ETL-pipeline-using-dbt-snowflake-airflow-aws-services.git
+   cd ETL-pipeline-using-dbt-snowflake-airflow-aws-services
+Configure environment variables (Snowflake & AWS credentials)
+
+Install requirements:
+pip install -r requirements.txt
+
+Initialize Airflow: airflow db init
+
+   
 ---
 
 ## Orchestration (Apache Airflow)
@@ -78,7 +117,7 @@ The end-to-end workflow is managed by **Apache Airflow**, ensuring the pipeline 
 
 ---
 
-## 🔧 Transformations (dbt)
+##  Transformations/Pipeline component (dbt)
 
 Data transformation is handled using **dbt**, following modern **Analytics Engineering** principles:
 
@@ -88,26 +127,25 @@ Data transformation is handled using **dbt**, following modern **Analytics Engin
   - `Marts`: Analytics-ready fact and dimension tables
 
 - **Data Quality Gates**
-  - dbt tests for `not_null`, `unique`, and `referential integrity`
+  - dbt tests for `not_null`, `unique`, and `referential integrity.`
   - Ensures only trusted data reaches analytics consumers
 
 - **Visual Lineage**
   - Auto-generated dependency graphs enable impact analysis and easier debugging
 
 ---
-## Business Insights Demonstrated
+## Result and Impact
 
-This ELT framework delivers **high-fidelity, analytics-ready data** that empowers stakeholders to uncover actionable insights, including:
+This pipeline produces **trusted analytics datasets** that enable:
 
 - **Content Strategy**  
-  Distribution analysis of content volume segmented by production type and genre.
+  Content distribution by production type/genre
 
 - **Temporal Trends**  
-  Deep dives into Netflix production trends over time to identify shifts in content strategy and market demand.
+  Tracking production trends over time
 
 - **Data Health Scoring**  
-  Monitoring data quality coverage and dbt test pass rates to ensure *Trusted Data* status across analytics models.
-
+ Automated metrics coverage and dbt test pass rates
 ---
 
 ## Future Repository Roadmap
@@ -122,10 +160,6 @@ Planned enhancements to further mature the platform include:
 
 - **Containerization**  
   Migrate the Airflow environment to **Docker** (using Docker Compose) to improve portability, reproducibility, and local development consistency.
-
-- **Containerization:**  
-  Migrate the Airflow environment to **Docker** (using Docker Compose) to improve portability, reproducibility, and local development consistency.
-
 
 ## Repository Structure (As Deployed)
 
