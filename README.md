@@ -127,7 +127,7 @@ The focus is on enabling **consistent, repeatable analytics**, not one-off analy
 - **Transformations:** dbt  
 - **Warehouse:** Snowflake  
 - **Orchestration:** Apache Airflow  
-- **Cloud Services:** AWS (S3, SNS, IAM)  
+- **Cloud Services:** AWS (S3, SNS, IAM), Slack 
 - **Analytics:** Power BI, AWS QuickSight  
 
 ---
