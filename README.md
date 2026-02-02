@@ -1,198 +1,185 @@
-# ETL Pipeline - dbt, Snowflake, Airflow & AWS Services
+# Analytics ELT Pipeline  
+### dbt, Snowflake, Airflow & AWS
 
-A production-style **ELT data platform** that transforms raw data into **trusted analytics-ready datasets** using industry-standard tooling.
+## Overview
 
-This project demonstrates how to build a robust, scalable ELT pipeline using modern data engineering best practices, including orchestration, data quality testing, observability, and reliability.
+Many analytics teams struggle with unreliable data, tightly coupled transformations, and fragile pipelines that break silently. These issues slow down analysis, reduce trust in metrics, and make it difficult to scale data usage across teams.
+
+This project demonstrates how to build an **analytics-focused ELT pipeline** that transforms raw data into **trusted, analytics-ready datasets**, using modern data engineering and analytics engineering practices. The emphasis is on **data reliability, clarity, and decision readiness**, rather than infrastructure complexity.
 
 ---
-## 📌 Project Overview
 
-###  Objective
+## Problem Context
 
-Analytics initiatives often fail due to:
-- Unvalidated/raw data leading to unreliable analyses  
-- Tight coupling between transformation logic and reporting layers  
-- Lack of observability, alerts, and automated failure handling
+Analytics initiatives commonly fail due to:
+- Raw or poorly validated data reaching dashboards and models  
+- Transformation logic tightly coupled to reporting layers  
+- Limited visibility into pipeline health and failures  
 
-**Goal:** Implement a scalable, testable ELT pipeline that delivers consistent, production-level reliability and trusted analytics outputs.
+The goal of this project is to show how these challenges can be addressed using a modular ELT design that supports **iteration, testing, and observability**.
+
 ---
-##  Architecture & Workflow
 
-**High-Level Flow:**
+## What This Pipeline Delivers
 
-1. **Storage:** Raw data lands in Amazon S3  
-2. **Ingestion:** Python scripts load data into Snowflake (Raw → Staging)  
-3. **Transformation:** dbt builds modular models (Staging → Intermediate → Marts)  
-4. **Orchestration:** Apache Airflow DAG manages task dependencies  
-5. **Monitoring:** Alerts via AWS SNS & Slack on failure  
-6. **Analytics:** Final datasets are ready for BI tools (Power BI, QuickSight)
+- Clear separation between raw, transformed, and analytics-ready data  
+- Reproducible and testable transformations using dbt  
+- Automated orchestration with dependency management  
+- Basic observability through alerts and retries  
+- Datasets ready for BI tools and ad-hoc analytics  
 
-**Architecture Diagram:**  
-![architecture](https://github.com/user-attachments/assets/9a4828ec-83a0-4c32-aa4c-4a1f834cd970)
+This mirrors the needs of real analytics teams where **trust and consistency matter as much as speed**.
+
+---
+
+## High-Level Architecture
+
+1. **Data Landing**  
+   Raw CSV data is stored in Amazon S3.
+
+2. **Ingestion**  
+   Python logic loads raw data into Snowflake staging schemas.
+
+3. **Transformation**  
+   dbt models transform data from staging → intermediate → analytics marts.
+
+4. **Orchestration**  
+   Apache Airflow manages dependencies and execution order.
+
+5. **Monitoring & Alerts**  
+   Failures trigger notifications via AWS SNS and Slack.
+
+6. **Analytics Consumption**  
+   Final datasets are exposed for Power BI, QuickSight, and SQL analysis.
+
+---
 
 ## Key Design Decisions
 
-- **ELT over ETL:**  
-  Raw data is loaded into Snowflake first, allowing transformations to leverage the warehouse’s scalability and simplifying ingestion logic.
+### ELT over ETL
+Raw data is loaded into Snowflake first, allowing transformations to leverage the warehouse’s scalability and keeping ingestion logic simple and flexible.
 
-- **dbt for Transformations:**  
-  dbt enforces modular, testable SQL models with built-in lineage, documentation, and data quality checks.
+### dbt for Transformations
+dbt enables modular SQL models, built-in testing, and lineage tracking, making transformations easier to reason about and maintain over time.
 
-- **Event-Driven Orchestration:**  
-  Airflow sensors ensure downstream processing only begins when source data is available, improving reliability and cost efficiency.
+### Orchestration with Airflow
+Airflow coordinates ingestion and transformation steps, ensuring downstream tasks only run when prerequisites are met.
 
-- **Observability by Default:**  
-  Slack and SNS alerts provide immediate feedback on pipeline health, enabling faster incident response.
-
-
-**Goal:**  
-Implement a **scalable, testable ELT pipeline** that delivers consistent, production-level reliability and trusted analytics outputs.
+### Observability by Default
+Basic alerting provides visibility into pipeline failures, helping teams respond quickly and maintain trust in the data.
 
 ---
 
+## Transformations (dbt)
 
-### High-Level Flow
+The dbt project follows a layered analytics-engineering structure:
 
-1. **Storage:** Raw data lands in **Amazon S3**
-2. **Ingestion:** Python logic loads data into **Snowflake** (Raw / Staging schemas)
-3. **Transformation:** **dbt** modular modeling (Staging → Intermediate → Marts)
-4. **Orchestration:** **Apache Airflow** manages task dependencies and sensors
-5. **Monitoring:** **AWS SNS** & **Slack** notifications on task failure
-6. **Analytics:** Final datasets exposed for **Power BI**, **AWS QuickSight**, and SQL analytics
+- **Staging models**  
+  Basic cleaning, type casting, and standardization
 
----
+- **Intermediate models**  
+  Business logic, joins, and derived fields
 
-## Tech Stack
+- **Marts**  
+  Analytics-ready fact and dimension tables designed for reporting and analysis
 
-| Layer | Tools |
-|------|------|
-| **Cloud Infrastructure** | AWS (S3, SNS, IAM, SSM), Slack |
-| **Data Warehouse** | Snowflake |
-| **Transformations** | dbt (models, tests, docs, lineage) |
-| **Orchestration** | Apache Airflow |
-| **Languages** | Python, SQL (Snowflake Dialect) |
-| **Analytics** | Power BI |
+Data quality checks include:
+- `not_null`
+- `unique`
+- referential integrity tests  
 
----
-## Getting Started
+Only validated data is promoted to analytics consumers.
 
-### 🔧 Prerequisites
-
-Before running this project locally or in cloud:
-
-- AWS account with S3 + SNS permissions  
-- Snowflake account with proper roles + warehouses  
-- Python ≥ 3.8  
-- dbt installed (`pip install dbt-snowflake`)  
-- Airflow installed and configured
-
-### 📦 Setup
-
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/danyyen/ETL-pipeline-using-dbt-snowflake-airflow-aws-services.git
-   cd ETL-pipeline-using-dbt-snowflake-airflow-aws-services
-Configure environment variables (Snowflake & AWS credentials)
-
-Install requirements:
-pip install -r requirements.txt
-
-Initialize Airflow: airflow db init
-
-   
 ---
 
 ## Orchestration (Apache Airflow)
 
-The end-to-end workflow is managed by **Apache Airflow**, ensuring the pipeline is **reliable, idempotent, and observable**.
+The pipeline is orchestrated using Apache Airflow with an emphasis on reliability and clarity:
 
-- **S3 Event Sensors:**  
-  Uses `reschedule` mode to efficiently wait for `credits.csv` and `titles.csv` in the S3 landing zone before triggering downstream tasks.
+- Sensors wait for source data availability in S3  
+- Tasks are retried automatically with backoff  
+- Slack notifications provide visibility into task success or failure  
 
-- **Resilient Error Handling:**  
-  Tasks are configured with automated retries and a **5-minute exponential backoff** to handle transient failures.
-
-- **Proactive Alerting:**  
-  Integrated Slack callbacks provide real-time visibility into pipeline health, sending instant notifications for task successes or failures.
+This setup reflects how analytics pipelines are commonly managed in production environments without unnecessary complexity.
 
 ---
 
-##  Transformations/Pipeline component (dbt)
+## Resulting Analytics Use Cases
 
-Data transformation is handled using **dbt**, following modern **Analytics Engineering** principles:
-
-- **Modular Architecture**
-  - `Staging`: Data cleaning and type casting
-  - `Intermediate`: Business logic and joins
-  - `Marts`: Analytics-ready fact and dimension tables
-
-- **Data Quality Gates**
-  - dbt tests for `not_null`, `unique`, and `referential integrity.`
-  - Ensures only trusted data reaches analytics consumers
-
-- **Visual Lineage**
-  - Auto-generated dependency graphs enable impact analysis and easier debugging
-
----
-## Result and Impact
-
-This pipeline produces **trusted analytics datasets** that enable:
+The final datasets enable analyses such as:
 
 - **Content Strategy**  
-  Content distribution by production type/genre
+  Distribution of content by genre or production type
 
 - **Temporal Trends**  
-  Tracking production trends over time
+  Understanding how content production evolves over time
 
-- **Data Health Scoring**  
- Automated metrics coverage and dbt test pass rates
+- **Data Quality Monitoring**  
+  Visibility into test coverage and validation success rates
+
+The focus is on enabling **consistent, repeatable analytics**, not one-off analysis.
+
 ---
 
-## Future Repository Roadmap
+## Tools & Technologies
 
-Planned enhancements to further mature the platform include:
+- **Languages:** Python, SQL  
+- **Transformations:** dbt  
+- **Warehouse:** Snowflake  
+- **Orchestration:** Apache Airflow  
+- **Cloud Services:** AWS (S3, SNS, IAM)  
+- **Analytics:** Power BI, AWS QuickSight  
 
-- **CI/CD Integration**  
-  Automate dbt testing and documentation deployment using **GitHub Actions** to enforce quality gates before production releases.
+---
 
-- **Advanced Validation**  
-  Integrate **Great Expectations** for deeper statistical data profiling, anomaly detection, and data drift monitoring.
-
-- **Containerization**  
-  Migrate the Airflow environment to **Docker** (using Docker Compose) to improve portability, reproducibility, and local development consistency.
-
-## Repository Structure (As Deployed)
+## Project Structure
 
 ```bash
 .
 ├── airflow-code/
 │   ├── DAGS/
-│   │   ├── Netflix_Data_Analytics.py   # Main Airflow DAG
-│   │   ├── alerting/                   # Failure notification logic
-│   │   ├── source_load/                # Ingestion helpers
-│   │   └── readme.md
-│   ├── config/
-│   ├── plugins/
-│   └── README.md
+│   │   ├── Netflix_Data_Analytics.py
+│   │   ├── alerting/
+│   │   ├── source_load/
+│   └── config/
 │
 ├── dbt_etl_code/
-│   ├── dbt_project.yml
 │   ├── models/
-│   │   ├── example/
-│   │   └── netflix/                    # Analytics-ready models
-│   ├── macros/
-│   ├── snapshots/
-│   ├── seeds/
+│   │   └── netflix/
 │   ├── tests/
-│   │   └── SHOW_DETAILS_NOT_NULL.sql
-│   ├── analyses/
-│   ├── datasets/                       # Public Netflix CSVs
-│   └── README.md
+│   ├── macros/
+│   └── datasets/
 │
 ├── Result_Deliverables_images/
-├── .gitignore
 └── README.md
+```
 
+## What I Would Improve Next
+
+If this pipeline were extended further, the next iterations would focus on:
+
+- **CI/CD for Data Quality**  
+  Add automated dbt model and test execution using CI/CD (e.g., GitHub Actions) to enforce quality gates before changes are promoted.
+
+- **Deeper Data Validation**  
+  Expand validation using statistical profiling and anomaly detection to catch subtle data issues beyond schema-level checks.
+
+- **Containerized Development**  
+  Introduce Docker and Docker Compose to standardize local development and improve reproducibility across environments.
+
+- **Incremental & Scalable Models**  
+  Explore incremental dbt models to improve performance and scalability as data volumes grow.
 
 ---
- 
+
+
+## Why This Project Matters
+
+This project reflects how analytics pipelines are built and used in practice — emphasizing **clarity, reliability, and trust** over technical novelty. It highlights how thoughtful data engineering and analytics engineering choices directly influence the quality, usability, and credibility of downstream analytics.
+
+---
+
+## About Me
+
+I’m a data professional interested in building analytics systems that make data easier to trust and easier to use.  
+Feel free to explore the code or reach out if you’d like to discuss the design decisions or trade-offs behind this project.
